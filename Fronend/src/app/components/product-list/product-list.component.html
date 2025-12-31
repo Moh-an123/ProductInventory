@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="header">
+    <h1>Product Inventory Management</h1>
+    <button class="btn-primary" (click)="openAddModal()">
+      <span class="icon">+</span> Add Product
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="searchTerm" 
+      (input)="searchProducts()"
+      placeholder="Search products by name or category..."
+      class="search-input"
+    />
+  </div>
+
+  <div class="table-container">
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts">
+          <td>{{ product.name }}</td>
+          <td><span class="category-badge">{{ product.category }}</span></td>
+          <td>${{ product.price.toFixed(2) }}</td>
+          <td>{{ product.quantity }}</td>
+          <td class="description">{{ product.description }}</td>
+          <td class="actions">
+            <button class="btn-edit" (click)="openEditModal(product)">Edit</button>
+            <button class="btn-delete" (click)="deleteProduct(product._id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredProducts.length === 0">
+          <td colspan="6" class="no-data">No products found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" [(ngModel)]="productForm.name" required />
+      </div>
+      
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" [(ngModel)]="productForm.category" required />
+      </div>
+      
+      <div class="form-group">
+        <label>Price ($)</label>
+        <input type="number" [(ngModel)]="productForm.price" step="0.01" required />
+      </div>
+      
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" [(ngModel)]="productForm.quantity" required />
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="productForm.description" rows="3" required></textarea>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModal()">Cancel</button>
+      <button class="btn-primary" (click)="saveProduct()">
+        {{ isEditMode ? 'Update' : 'Add' }} Product
+      </button>
+    </div>
+  </div>
+</div>
